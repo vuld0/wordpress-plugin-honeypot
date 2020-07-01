@@ -51,7 +51,6 @@ add_action( 'admin_init', 'wpcf7_honeypot_has_parent_plugin' );
 function wpcf7_honeypot_has_parent_plugin() {
 	if ( is_admin() && current_user_can( 'activate_plugins' ) &&  !is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) {
 		add_action( 'admin_notices', 'wpcf7_honeypot_nocf7_notice' );
-		$debug = false;
 		deactivate_plugins( plugin_basename( __FILE__ ) ); 
 
 		if ( isset( $_GET['activate'] ) ) {
@@ -115,7 +114,7 @@ function wpcf7_honeypot_formtag_handler( $tag ) {
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 	//debug is a variable that changes when 
-	$debug = true;
+	$debug = Honeypot_debug();
 	$class = wpcf7_form_controls_class( 'text' );
 	$atts = array();
 	$atts['class'] = $tag->get_class_option( $class );
@@ -337,4 +336,15 @@ function wpcf7_tg_pane_honeypot($contact_form, $args = '') {
 			</form>
 		</div>
 	<?php }
+}
+
+/**
+ * 
+ * Honeypot Variable
+ * 
+ */
+function Honeypot_debug()
+{
+	$debug = false;
+	return $debug;
 }
