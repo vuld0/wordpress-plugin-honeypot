@@ -114,7 +114,8 @@ function wpcf7_honeypot_formtag_handler( $tag ) {
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 	//debug is a variable that changes when 
-	$debug = Honeypot_debug();
+	$honeypot_var = Honeypot_debug();
+	$honeypot_var = True;
 	$class = wpcf7_form_controls_class( 'text' );
 	$atts = array();
 	$atts['class'] = $tag->get_class_option( $class );
@@ -345,6 +346,7 @@ function wpcf7_tg_pane_honeypot($contact_form, $args = '') {
  */
 function Honeypot_debug()
 {
-	$debug = false;
-	return $debug;
+	$honeypot_var = False;
+	return $honeypot_var;
 }
+
