@@ -29,6 +29,11 @@ Choose the zip file and do not forget to activate the plugin.
 4. So when someone tries to fill the hidden field there is a validation error shown and the form is not sent further.
 5. While the form throws a validation error there is a variable which turns into "true" indicating that someone is trying to hack in.
 
+### Honeypots
+
+1. Login attempts logs
+2. Hidden form field (contact form-7)
+
 
 ### Built with
 
