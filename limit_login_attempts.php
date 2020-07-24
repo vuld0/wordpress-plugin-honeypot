@@ -1,8 +1,9 @@
 <?php 
 
+define('WP_DEBUG',true);
 ini_set('display_errors', 1);
 
-//defining the plugin directories and stuffs
+
 
 if(!function_exists('wp_authenticate')){
 	$options = get_option('login_attempt');
@@ -18,7 +19,7 @@ function wp_authenticate($username,$password)
 
 $user = apply_filters('authenticate',null,$username,$password);
 if($user == null){
-	$user = new WP_Error('authentication_failed',_('<strong>ERROR</strong>: Invalid username or incorrect password.'));
+	$user = new WP_Error('authentication_failed',__('<strong>ERROR</strong>: Invalid username or incorrect password.'));
 }
 
 $ignore_codes = array(
