@@ -1,40 +1,12 @@
 <?php
 /*
-Plugin Name: Honeypot for Contact Form 7
-Plugin URI: http://www.nocean.ca/plugins/honeypot-module-for-contact-form-7-wordpress-plugin/
-Description: Add honeypot anti-spam functionality to the popular Contact Form 7 plugin.
-Author: Nocean
-Author URI: http://www.nocean.ca
-Version: 1.14.1
-Text Domain: contact-form-7-honeypot
+Plugin Name: Wordpress plugin Honeypot
+Plugin URI: localhost/blog
+Description: Add honeypot functionalities in a plugin
+Author: Chirag Bablani
 Domain Path: /languages/
 */
 
-/*  Copyright 2019  Ryan McLaughlin  (email : hello@nocean.ca)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
-
-/**
-* Load textdomain
-*
-* Technically depreciated, all translations are handled via 
-* https://translate.wordpress.org/projects/wp-plugins/contact-form-7-honeypot
-* Leaving in the code for now.
-*/
 
 
 add_action( 'plugins_loaded', 'wpcf7_honeypot_load_textdomain' );
@@ -116,8 +88,6 @@ function wpcf7_honeypot_formtag_handler( $tag ) {
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 	//debug is a variable that changes when 
-	$honeypot_var = Honeypot_debug();
-	$honeypot_var = True;
 	$class = wpcf7_form_controls_class( 'text' );
 	$atts = array();
 	$atts['class'] = $tag->get_class_option( $class );
@@ -342,29 +312,25 @@ function wpcf7_tg_pane_honeypot($contact_form, $args = '') {
 }
 
 /**
- * 
- * Honeypot Variable
+ *
+ * Logging Failed login attempts
+ * 		
  * 
  */
-function Honeypot_debug()
-{
-	$honeypot_var = False;
-	return $honeypot_var;
-}
 
 define('WP_DEBUG', true);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-define( 'HONNYPOTTER__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'HONEYPOT__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 
 
 
 if (!function_exists('wp_authenticate')) {
-	$options = get_option('honnypotter');
+	$options = get_option('honeypot');
 	$options['wp_authenticate_override'] = true;
-	update_option('honnypotter', $options);
+	update_option('honeypot', $options);
 
 
 	function wp_authenticate($username, $password)
@@ -404,8 +370,9 @@ if (!function_exists('wp_authenticate')) {
 			 *
 			 * @param string $username User login.
 			 */
-			$logname = get_option('honnypotter');
+			$logname = get_option('honeypot');
 			$logname = $logname['log_name'];
+			
  			$logfile = fopen(plugin_dir_path(__FILE__) . $logname, 'a') or die('could not open/create file');
  			fwrite($logfile, sprintf("wp: %s - %s:%s\n", date('Y-m-d H:i:s') , $username, $password));
  			fclose($logfile);
@@ -415,9 +382,9 @@ if (!function_exists('wp_authenticate')) {
 		return $user;
 	}
 }else{
-	$options = get_option('honnypotter');
+	$options = get_option('honeypot');
 	$options['wp_authenticate_override'] = false;
-	update_option('honnypotter', $options);
+	update_option('honeypot', $options);
 }
 
 
