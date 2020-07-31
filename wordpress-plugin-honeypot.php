@@ -322,11 +322,17 @@ define('WP_DEBUG', true);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-define( 'HONEYPOT__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'HONEYPOT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
+require_once(HONEYPOT_PLUGIN_DIR .'failed_login_class.php');
+register_activation_hook(__FILE__,array('Failed_Login','option_init'));
+add_action('init',array('Failed_Login','init'));
 
-
-
+if( is_admin())
+{
+	require_once(HONEYPOT_PLUGIN_DIR. 'failed_login_class_admin.php');
+	add_action('init',array('Failed_login_admin','init'));
+}
 if (!function_exists('wp_authenticate')) {
 	$options = get_option('honeypot');
 	$options['wp_authenticate_override'] = true;

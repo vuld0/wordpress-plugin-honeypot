@@ -23,6 +23,18 @@ Choose the zip file and do not forget to activate the plugin.
 
 ### Deployment
 
+#### Login Attempts Logs
+To use the login attempts logs feature we need to perform some steps before:
+
+1. After activating the plugin goto
+
+```
+Settings >> Honeypot >> and check the log name to be saved.
+```
+2. Log out as a user and try giving wrong credentials to log in.
+3. Then go to the plugin directory and open the log, you can get the timestamp, username, password.
+
+#### Contact form hidden field
 1. Use the contact-form-7 plugin to create a form.
 2. The form can then have a will have a form-tag-generator named "Honeypot".
 3. That includes a form which have several details to be filled.(Just remember the tag would be hidden)

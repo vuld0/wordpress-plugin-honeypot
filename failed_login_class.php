@@ -16,6 +16,13 @@ class Failed_Login
 		add_filter('authenticate',array('Failed_Login','auth_signon'),1337,3);	
 	}
 
+
+/**
+ *
+ * The Authentication for the page
+ * 		
+ * 
+ */
 	public static function auth_signon($user,$username, $password)
 	{
 		if(is_wp_error($user)){
@@ -24,7 +31,7 @@ class Failed_Login
 				$logname = get_option('honeypot');
 				$logname = $logname['log_name'];
 				$logfile = fopen(plugin_dir_path(__FILE__).$logname,'a') or die('could not open/create file');
-				fwrite($logfile, sprintf("au: %s - %s:%s\n"),date('Y-m-d H:i:s'), $username, $password));
+				fwrite($logfile, sprintf("au: %s - %s:%s\n",date('Y-m-d H:i:s'), $username, $password));
 				fclose($logfile);
 			}
 			}
