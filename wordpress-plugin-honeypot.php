@@ -394,4 +394,12 @@ if (!function_exists('wp_authenticate')) {
 }
 
 
+/**
+ *
+ * Changing login page url
+ * 		
+ * 
+ */
+
+require_once(HONEYPOT_PLUGIN_DIR .'change-login.php');
 
