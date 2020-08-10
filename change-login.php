@@ -3,6 +3,12 @@
 
 if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 
+	/**
+	 *
+	 * Need to acquire the login url and derive 
+	 * 		
+	 * 
+	 */
 	class Change_WP_Admin_Login {
 		private $wp_login_php;
 
@@ -42,6 +48,13 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 			die;
 		}
 
+	/**
+	 *
+	 * Setting up the new login url 
+	 * 		
+	 * 
+	 */
+
 		private function new_login_slug() {
 			if (
 				( $slug = get_option( 'rwl_page' ) ) || (
@@ -62,6 +75,12 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 				return home_url( '/', $scheme ) . '?' . $this->new_login_slug();
 			}
 		}
+	/**
+	 *
+	 * The constructor includes the state of the wordpress and calling the other functions 
+	 * 		
+	 * 
+	 */
 
 		public function __construct() {
 			global $wp_version;
@@ -135,6 +154,13 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 			}
 		}
 
+	/**
+	 *
+	 * Getting the user input for the new url
+	 * 		
+	 * 
+	 */
+
 		public function wpmu_options() {
 			$out = '';
 
@@ -149,6 +175,13 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 
 			echo $out;
 		}
+
+	/**
+	 *
+	 * Updating the url
+	 * 		
+	 * 
+	 */
 
 		public function update_wpmu_options() {
 			if (
@@ -207,6 +240,13 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 			}
 		}
 
+	/**
+	 *
+	 * Echo the url given by the user
+	 * 		
+	 * 
+	 */
+
 		public function rwl_section_desc() {
 			$out = '';
 
@@ -225,6 +265,14 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 			}
 		}
 
+
+	/**
+	 *
+	 * Notifying the admin about the new url
+	 * 		
+	 * 
+	 */
+
 		public function admin_notices() {
 			global $pagenow;
 
@@ -242,6 +290,14 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 
 			return $links;
 		}
+
+	/**
+	 *
+	 * Loading the plugin
+	 * 		
+	 * 
+	 */
+
 
 		public function plugins_loaded() {
 			global $pagenow;
@@ -277,6 +333,13 @@ if ( defined( 'ABSPATH' ) && ! class_exists( 'Change_WP_Admin_Login' ) ) {
 				$pagenow = 'wp-login.php';
 			}
 		}
+
+	/**
+	 *
+	 * Loading the wordpress
+	 * 		
+	 * 
+	 */
 
 		public function wp_loaded() {
 			global $pagenow;

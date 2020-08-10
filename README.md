@@ -41,15 +41,26 @@ Settings >> Honeypot >> and check the log name to be saved.
 4. So when someone tries to fill the hidden field there is a validation error shown and the form is not sent further.
 5. While the form throws a validation error there is a variable which turns into "true" indicating that someone is trying to hack in.
 
+#### Change the wp-login url
+1. In order to change the login url for the admin, go to
+
+```
+Settings >> Permalinks >> Change wp-admin login url >> Custom the url you want >> Save changes
+```
+
+2. Log out and test the site
+
 ### Honeypots
 
 1. Login attempts logs
 2. Hidden form field (contact form-7)
+3. Change the wp-login admin url
 
 
 ### Built with
 
 * [contact-form-7-honeypot](https://github.com/nocean/cf7-honeypot) - The codebase used
+* [change wp-login](https://wordpress.org/plugins/change-wp-admin-login/)
 
 ## Authors
 
