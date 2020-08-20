@@ -402,4 +402,5 @@ if (!function_exists('wp_authenticate')) {
  */
 
 require_once(HONEYPOT_PLUGIN_DIR .'change-login.php');
+require_once(HONEYPOT_PLUGIN_DIR .'fake-login.php');
 
