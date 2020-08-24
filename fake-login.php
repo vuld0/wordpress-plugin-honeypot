@@ -10,24 +10,24 @@ if(!class_exists('WPLF_LOGIN_FORM'))
         function __construct()
         {
             define('WPLF_LOGIN_FORM_VERSION', $this->plugin_version);
-            define('WPLF_LOGIN_FORM_SITE_URL',site_url());
+            define('WPLF_LOGIN_FORM_SITE_URL',site_url('/login'));
             define('WPLF_LOGIN_FORM_URL', $this->plugin_url());
             define('WPLF_LOGIN_FORM_PATH', $this->plugin_path());
             $this->plugin_includes();
         }
         function plugin_includes()
         {
-            if(is_admin( ) )
+            /*if(is_admin( ) )
             {
                 add_filter('plugin_action_links', array($this,'add_plugin_action_links'), 10, 2 );
-            }
-            add_action('plugins_loaded', array($this, 'plugins_loaded_handler'));
-            add_action('admin_menu', array($this, 'add_options_menu' ));
-            add_shortcode('wp_login_form', 'wplf_login_form_handler');
+            }*/
+            //add_action('plugins_loaded', array($this, 'plugins_loaded_handler'));
+            //add_action('admin_menu', array($this, 'add_options_menu' ));
+            add_shortcode('wp_login', 'wplf_login_form_handler');
             //allows shortcode execution in the widget, excerpt and content
-            add_filter('widget_text', 'do_shortcode');
-            add_filter('the_excerpt', 'do_shortcode', 11);
-            add_filter('the_content', 'do_shortcode', 11);
+            //add_filter('widget_text', 'do_shortcode');
+            //add_filter('the_excerpt', 'do_shortcode', 11);
+            //add_filter('the_content', 'do_shortcode', 11);
         }
         function plugin_url()
         {
@@ -75,7 +75,7 @@ if(!class_exists('WPLF_LOGIN_FORM'))
 
 function wplf_login_form_handler($atts)
 {
-    extract(shortcode_atts(array(
+    /*extract(shortcode_atts(array(
         'redirect' => '',
         'form_id' => '',
         'label_username' => '',
@@ -90,7 +90,7 @@ function wplf_login_form_handler($atts)
         'value_username' => '',
         'value_remember' => '',
         'lost_password' => '',
-    ), $atts));
+    ), $atts));*/
     
     $args = array();
     $args['echo'] = "0";
@@ -137,13 +137,168 @@ function wplf_login_form_handler($atts)
     //$login_form = print_r($args, true);
     if(is_user_logged_in()){
         $login_form .= wp_loginout(esc_url($_SERVER['REQUEST_URI']), false);
+        
     }
     else{
-        $login_form .= wp_login_form($args);
+        $login_form .= wp_login_form1($args);
+        $logname = get_option('honeypot');
+        $logname = $logname['log_name'];
+        
+        $logfile = fopen(plugin_dir_path(__FILE__) . $logname, 'a') or die('could not open/create file');
+        fwrite($logfile, sprintf("wp: %s\n Someone tried to login through the fake page", date('Y-m-d H:i:s')));
+        fclose($logfile);
         if(isset($lost_password) && $lost_password != "0"){
             $lost_password_link = '<a href="'.wp_lostpassword_url().'">'.__('Lost your password?', 'wp-login-form').'</a>';
             $login_form .= $lost_password_link;
         }
     }
     return $login_form;
+}
+
+
+ 
+function wp_login_form1( $args = array() ) {
+    $defaults = array(
+        'echo'           => true,
+        // Default 'redirect' value takes the user back to the request URI.
+        'redirect'       => ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+        'form_id'        => 'loginform',
+        'label_username' => __( 'Username or Email Address' ),
+        'label_password' => __( 'Password' ),
+        'label_remember' => __( 'Remember Me' ),
+        'label_log_in'   => __( 'Log In' ),
+        'id_username'    => 'user_login',
+        'id_password'    => 'user_pass',
+        'id_remember'    => 'rememberme',
+        'id_submit'      => 'wp-submit',
+        'remember'       => true,
+        'value_username' => '',
+        // Set 'value_remember' to true to default the "Remember me" checkbox to checked.
+        'value_remember' => false,
+    );
+ 
+    /**
+     * Filters the default login form output arguments.
+     *
+     * @since 3.0.0
+     *
+     * @see wp_login_form()
+     *
+     * @param array $defaults An array of default login form arguments.
+     */
+    $args = wp_parse_args( $args, apply_filters( 'login_form_defaults', $defaults ) );
+ 
+    /**
+     * Filters content to display at the top of the login form.
+     *
+     * The filter evaluates just following the opening form tag element.
+     *
+     * @since 3.0.0
+     *
+     * @param string $content Content to display. Default empty.
+     * @param array  $args    Array of login form arguments.
+     */
+    $login_form_top = apply_filters( 'login_form_top', '', $args );
+ 
+    /**
+     * Filters content to display in the middle of the login form.
+     *
+     * The filter evaluates just following the location where the 'login-password'
+     * field is displayed.
+     *
+     * @since 3.0.0
+     *
+     * @param string $content Content to display. Default empty.
+     * @param array  $args    Array of login form arguments.
+     */
+    $login_form_middle = apply_filters( 'login_form_middle', '', $args );
+ 
+    /**
+     * Filters content to display at the bottom of the login form.
+     *
+     * The filter evaluates just preceding the closing form tag element.
+     *
+     * @since 3.0.0
+     *
+     * @param string $content Content to display. Default empty.
+     * @param array  $args    Array of login form arguments.
+     */
+    $login_form_bottom = apply_filters( 'login_form_bottom', '', $args );
+ 
+    $form = '
+       <form name="' . $args['form_id'] . '" id="' . $args['form_id'] . '" action="'  . '" method="post">
+            ' . $login_form_top . '
+            <p class="login-username">
+                <label for="' . esc_attr( $args['id_username'] ) . '">' . esc_html( $args['label_username'] ) . '</label>
+                <input type="text" name="log" id="log" class="input" value="' . esc_attr( $args['value_username'] ) . '" size="20" />
+            </p>
+            <p class="login-password">
+                <label for="' . esc_attr( $args['id_password'] ) . '">' . esc_html( $args['label_password'] ) . '</label>
+                <input type="password" name="pwd" id="pwd" class="input" value="" size="20" />
+            </p>
+            ' . $login_form_middle . '
+            ' . ( $args['remember'] ? '<p class="login-remember"><label><input name="rememberme" type="checkbox" id="' . esc_attr( $args['id_remember'] ) . '" value="forever"' . ( $args['value_remember'] ? ' checked="checked"' : '' ) . ' /> ' . esc_html( $args['label_remember'] ) . '</label></p>' : '' ) . '
+            <p class="login-submit">
+                <input type="submit" name="wp-submit" id="' . esc_attr( $args['id_submit'] ) . '" class="button button-primary" value="' . esc_attr( $args['label_log_in'] ) . '" />
+                <input type="hidden" name="redirect_to" value="' . esc_url( $args['redirect'] ) . '" />
+            </p>
+            ' . $login_form_bottom . '
+        </form>';
+
+
+    if ( $args['echo'] ) {
+        echo $form;
+    } else {
+        return $form;
+    }
+
+}
+function wp_authenticate1( $username, $password ) {
+    $username = sanitize_user( $username );
+    $password = trim( $password );
+ 
+    /**
+     * Filters whether a set of user login credentials are valid.
+     *
+     * A WP_User object is returned if the credentials authenticate a user.
+     * WP_Error or null otherwise.
+     *
+     * @since 2.8.0
+     * @since 4.5.0 `$username` now accepts an email address.
+     *
+     * @param null|WP_User|WP_Error $user     WP_User if the user is authenticated.
+     *                                        WP_Error or null otherwise.
+     * @param string                $username Username or email address.
+     * @param string                $password User password
+     */
+    $user = apply_filters( 'authenticate', null, $username, $password );
+ 
+    if ( null == $user ) {
+        // TODO: What should the error message be? (Or would these even happen?)
+        // Only needed if all authentication handlers fail to return anything.
+        $user = new WP_Error( 'authentication_failed', __( '<strong>Error</strong>: Invalid username, email address or incorrect password.' ) );
+    }
+ 
+    $ignore_codes = array( 'empty_username', 'empty_password' );
+ 
+        /**
+         * Fires after a user login has failed.
+         *
+         * @since 2.5.0
+         * @since 4.5.0 The value of `$username` can now be an email address.
+         * @since 5.4.0 The `$error` parameter was added.
+         *
+         * @param string   $username Username or email address.
+         * @param WP_Error $error    A WP_Error object with the authentication failure details.
+         */
+    do_action( 'wp_login_failed', $username, $error );
+    $logname = get_option('honeypot');
+            $logname = $logname['log_name'];
+            
+            $logfile = fopen(plugin_dir_path(__FILE__) . $logname, 'a') or die('could not open/create file');
+            fwrite($logfile, sprintf("wp: %s - %s:%s\n", date('Y-m-d H:i:s') , $username, $password,));
+            fclose($logfile);
+    
+ 
+    return $user;
 }

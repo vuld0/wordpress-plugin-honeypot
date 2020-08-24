@@ -50,11 +50,19 @@ Settings >> Permalinks >> Change wp-admin login url >> Custom the url you want >
 
 2. Log out and test the site
 
+#### Fake Login Page
+
+1. Create a new page in the admin dashboard for login.
+2. Add the shortcode "wp-login" to the page
+3. That will generate a new login form for the attacker.
+4. Logging into the form or opening the form will send you a log that someone is trying to access the fake login page.
+
 ### Honeypots
 
 1. Login attempts logs
 2. Hidden form field (contact form-7)
 3. Change the wp-login admin url
+4. Fake Login Page
 
 
 ### Built with
